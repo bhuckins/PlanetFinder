@@ -1,0 +1,26 @@
+﻿@page
+@model PlanetFinder.Pages.Echo.IndexModel
+@{
+    ViewData["Title"] = "Echo";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Echo</h1>
+    <p>Please enter the text you want to echo below</p>
+    <input id="echoInput" name="echoInput" />
+    <button id="button" name="button" onclick="copyText()">Echo Input</button> 
+    <br />
+    <br />
+    <input id="echoOutput" name="echoOutput" readonly="readonly" style="background-color: lightgray;" />
+</div>
+
+<script type="text/javascript">
+        function copyText() {
+            var echoInput = $("#echoInput");
+            var echoOutput = $("#echoOutput");
+
+            if (echoInput && echoOutput) {
+                echoOutput.val(echoInput.val());
+            }
+        }
+</script>

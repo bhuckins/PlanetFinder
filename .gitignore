@@ -4,3 +4,5 @@
 
 /.vs
 /PlanetFinder/.vs/PlanetFinder
+/PlanetFinder/obj
+/PlanetFinder/bin/Debug/net8.0
