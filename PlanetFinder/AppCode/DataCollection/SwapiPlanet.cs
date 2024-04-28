@@ -1,6 +1,6 @@
 ﻿using PlanetFinder.AppCode.DataObjects;
 
-namespace PlanetFinder.AppCode.DataCollector
+namespace PlanetFinder.AppCode.DataCollection
 {
     public class SwapiPlanet : IPlanet
     {

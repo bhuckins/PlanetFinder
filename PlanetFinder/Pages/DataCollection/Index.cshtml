@@ -1,4 +1,17 @@
 ﻿@page
 @model PlanetFinder.Pages.DataCollection.IndexModel
 @{
+    ViewData["Title"] = "Data Collection";
 }
+
+<div class="text-center">
+    <h1 class="display-4">Data Collection</h1>
+    <p>Please click on the button below to begin the data collection from <a href="https://swapi.tech/">https://swapi.tech/</a> (SW API) and store the data in a Microsoft Azure database</p>
+    <form id="form" name="form" method="post">
+        <input name="btnCollect" id="btnCollect" asp-page-handler="CollectData" type="submit" value="Collect Data" class="btn btn-success" />
+        <br />
+        <br />
+        <textarea asp-for="@Model.LogString" value="@Model.LogString" readonly="readonly" style="background-color: lightgray; width: 350px; height: 200px;"></textarea>
+    </form>
+</div>
+

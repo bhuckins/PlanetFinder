@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using PlanetFinder.AppCode.DataObjects;
 
-namespace PlanetFinder.AppCode.DataCollector
+namespace PlanetFinder.AppCode.DataCollection
 {
     public class SwapiDataCollector : DataCollector
     {
@@ -11,7 +11,7 @@ namespace PlanetFinder.AppCode.DataCollector
             // We can get the total number of planets from paging through the results at https://swapi.tech/api/planets
             // However, we'd have to page through the results, which uses up our limited number of API calls before getting throttled
             // So, just hardcode the number of planets here - could update to determine this dynamically if API throttling was not a concern
-            const int MaxPlanetIndex = 10; // 60
+            const int MaxPlanetIndex = 60;
 
             const string PlanetUrlFormatString = @"https://www.swapi.tech/api/planets/{0}";
 
