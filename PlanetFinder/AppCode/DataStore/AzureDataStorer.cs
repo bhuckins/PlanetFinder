@@ -6,7 +6,6 @@ namespace PlanetFinder.AppCode.DataStore
     public class AzureDataStorer : DataStorer
     {
         protected const string ConnectionString = @"Server=tcp:planet-finder.database.windows.net,1433;Initial Catalog=planet-finder;Persist Security Info=False;User ID=planetfinderapp;Password=Pa$$w0rd;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-        //protected const string ConnectionString = @"Server=tcp:planet-finder.database.windows.net,1433;Initial Catalog=planet-finder;Persist Security Info=False;User ID=sqladmin;Password=admin123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
         public override bool SaveToStore(IList<IPlanet> planets)
         {
             const string InsertQuery = @"
