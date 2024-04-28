@@ -1,0 +1,16 @@
+﻿@page
+@model PlanetFinder.Pages.Tests.IndexModel
+@{
+    ViewData["Title"] = "Run Tests";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Run Tests</h1>
+    <p>Please click on the button below to run the project tests</p>
+    <form id="form" name="form" method="post">
+        <input name="btnRunTests" id="btnRunTests" asp-page-handler="RunTests" type="submit" value="Run Tests" class="btn btn-success" />
+        <br />
+        <br />
+        <textarea asp-for="@Model.TestResultsString" value="@Model.TestResultsString" readonly="readonly" style="background-color: lightgray; width: 350px; height: 200px;"></textarea>
+    </form>
+</div>

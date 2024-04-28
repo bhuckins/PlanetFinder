@@ -1,15 +1,51 @@
-﻿using PlanetFinder.AppCode.DataObjects;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+using PlanetFinder.AppCode.DataObjects;
 
 namespace PlanetFinder.AppCode.DataCollection
 {
     public class SwapiPlanet : IPlanet
     {
         public string Name { get; set; }
-        public string Climate { get; set; }
-        public string Gravity { get; set; }
 
-        // The SWAPI will return "unknown" for planets without a known population
-        // We want to be able to treat the population as an integer, so translate "unknown" to null
+        // The SWAPI will return "unknown" for fields instead of null
+        // We want to treat these as null, so translate those fields here
+        public string ClimateAPI { get; set; }
+        public string Climate
+        {
+            get
+            {
+                string climate;
+
+                if (string.Compare(ClimateAPI, "unknown", true) == 0)
+                    climate = null;
+                else
+                    climate = ClimateAPI;
+
+                return climate;
+            }
+            // Shouldn't be anything trying to set the Climate of a SwapiPlanet - throw exception if they try
+            set { throw new NotImplementedException(); }
+        }
+
+        public string GravityAPI { get; set; }
+        public string Gravity
+        {
+            get
+            {
+                string gravity;
+
+                if (string.Compare(GravityAPI, "unknown", true) == 0)
+                    gravity = null;
+                else
+                    gravity = GravityAPI;
+
+                return gravity;
+            }
+            set { throw new NotImplementedException(); }
+        }
+
+        
+        // Want to parse the string population from the API into an integer
         public string PopulationAPI { get; set; }
         public int? Population
         {
@@ -31,12 +67,11 @@ namespace PlanetFinder.AppCode.DataCollection
 
                 return population;
             }
-            // Shouldn't be anything trying to set the Population of a SwapiPlanet - throw exception if they try
+            
             set { throw new NotImplementedException(); }
         }
 
-        // Same for SurfaceWater
-        // Additionally, want to to convert SurfaceWater to a decimal from a percent (Ex. .05 instead of 5 %)
+        // Want to to convert SurfaceWater to a decimal from a percent (Ex. .05 instead of 5 %)
         public string SurfaceWaterAPI { get; set; }
         public decimal? SurfaceWater
         {
@@ -60,6 +95,22 @@ namespace PlanetFinder.AppCode.DataCollection
             }
             set { throw new NotImplementedException(); }
         }
-        public string Terrain { get; set; }
+
+        public string TerrainAPI { get; set; }
+        public string Terrain
+        {
+            get
+            {
+                string terrain;
+
+                if (string.Compare(TerrainAPI, "unknown", true) == 0)
+                    terrain = null;
+                else
+                    terrain = TerrainAPI;
+
+                return terrain;
+            }
+            set { throw new NotImplementedException(); }
+        }
     }
 }

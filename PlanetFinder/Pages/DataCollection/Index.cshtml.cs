@@ -11,8 +11,6 @@ namespace PlanetFinder.Pages.DataCollection
         public string LogString { get; set; }
         public void OnGet()
         {
-            //SwapiDataCollector dataCollector = new SwapiDataCollector();
-            //var results = dataCollector.GetPlanets();
         }
 
         public IActionResult OnPostCollectData()

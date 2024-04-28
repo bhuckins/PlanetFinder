@@ -1,4 +1,5 @@
 ﻿using PlanetFinder.AppCode.DataObjects;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace PlanetFinder.AppCode.DataStore
@@ -53,7 +54,22 @@ SELECT
 
         public override IList<IPlanet> GetAllPlanets()
         {
-            throw new NotImplementedException();
+            const string SelectQuery = @"SELECT * FROM dbo.Planets";
+
+            DataTable results = executeQuery(SelectQuery, null);
+
+            return results.Rows.OfType<DataRow>()
+                .Select(dr => (IPlanet)new DataStorePlanet()
+                {
+                    ID = dr.Field<int>("ID"),
+                    Name = dr.Field<string>("Name"),
+                    Climate = dr.Field<string>("Climate"),
+                    Gravity = dr.Field<string>("Gravity"),
+                    Population = dr.Field<int?>("Population"),
+                    SurfaceWater = dr.Field<decimal?>("SurfaceWater"),
+                    Terrain = dr.Field<string>("Terrain")
+                })
+                .ToList();
         }
 
         public override bool DeleteAllPlanets()
@@ -61,6 +77,33 @@ SELECT
             const string DeleteQuery = @"DELETE FROM dbo.Planets";
 
             return executeNonQuery(DeleteQuery, null);
+        }
+
+        private static DataTable executeQuery(string query, List<SqlParameter> parameters)
+        {
+            DataTable queryResults = new DataTable();
+
+            // Should wrap this in a try / catch block, with logging any exceptions and returning false
+            // But for now just have any exceptions carry through
+
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlCommand cmd = new SqlCommand(query, connection))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+            {
+                if (parameters != null && parameters.Any())
+                {
+                    foreach (SqlParameter parameter in parameters)
+                        cmd.Parameters.Add(parameter);
+                }
+
+                connection.Open();
+
+                adapter.Fill(queryResults);
+
+                connection.Close();
+            }
+
+            return queryResults;
         }
 
         private static bool executeNonQuery(string query, List<SqlParameter> parameters)

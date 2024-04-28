@@ -40,11 +40,11 @@ namespace PlanetFinder.AppCode.DataCollection
                 SwapiPlanet planet = new SwapiPlanet()
                 {
                     Name = planetResult.result.properties.name,
-                    Climate = planetResult.result.properties.climate,
-                    Gravity = planetResult.result.properties.gravity,
+                    ClimateAPI = planetResult.result.properties.climate,
+                    GravityAPI = planetResult.result.properties.gravity,
                     PopulationAPI = planetResult.result.properties.population,
                     SurfaceWaterAPI = planetResult.result.properties.surface_water,
-                    Terrain = planetResult.result.properties.terrain
+                    TerrainAPI = planetResult.result.properties.terrain
                 };
 
                 planets.Add(planet);
