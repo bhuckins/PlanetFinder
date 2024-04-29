@@ -1,13 +1,16 @@
-﻿using PlanetFinder.AppCode.DataObjects;
+﻿using PlanetFinder.AppCode.DataAnalysis;
+using PlanetFinder.AppCode.DataObjects;
 using System.Data;
 using System.Data.SqlClient;
+using System.Numerics;
 
 namespace PlanetFinder.AppCode.DataStore
 {
     public class AzureDataStorer : DataStorer
     {
         protected const string ConnectionString = @"Server=tcp:planet-finder.database.windows.net,1433;Initial Catalog=planet-finder;Persist Security Info=False;User ID=planetfinderapp;Password=Pa$$w0rd;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-        public override bool SaveToStore(IList<IPlanet> planets)
+
+        public override bool SavePlanetsToStore(IList<IPlanet> planets)
         {
             const string InsertQuery = @"
 INSERT INTO dbo.Planets
@@ -52,14 +55,14 @@ SELECT
             return !anyInsertFailed;
         }
 
-        public override IList<IPlanet> GetAllPlanets()
+        public override IList<DataStorePlanet> GetAllPlanets()
         {
             const string SelectQuery = @"SELECT * FROM dbo.Planets";
 
             DataTable results = executeQuery(SelectQuery, null);
 
             return results.Rows.OfType<DataRow>()
-                .Select(dr => (IPlanet)new DataStorePlanet()
+                .Select(dr => new DataStorePlanet()
                 {
                     ID = dr.Field<int>("ID"),
                     Name = dr.Field<string>("Name"),
@@ -77,6 +80,120 @@ SELECT
             const string DeleteQuery = @"DELETE FROM dbo.Planets";
 
             return executeNonQuery(DeleteQuery, null);
+        }
+
+        public override bool SavePlanetGroupsToStore(IList<IPlanetGroup> planetGroups)
+        {
+            const string InsertQuery = @"
+INSERT INTO dbo.PlanetGroups
+(
+    Climate,
+    Terrain,
+    PlanetCount
+)
+SELECT
+    @Climate,
+    @Terrain,
+    @PlanetCount
+";
+            // If there are no planet groups to save then the save was successful
+            if (planetGroups == null || !planetGroups.Any())
+                return true;
+            bool anyInsertFailed = false;
+
+            foreach (IPlanetGroup planetGroup in planetGroups)
+            {
+                List<SqlParameter> parameters = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Climate", (object)planetGroup.Climate ?? DBNull.Value),
+                    new SqlParameter("@Terrain", (object)planetGroup.Terrain ?? DBNull.Value),
+                    new SqlParameter("@PlanetCount", planetGroup.PlanetCount)
+                };
+
+                if (!executeNonQuery(InsertQuery, parameters))
+                    anyInsertFailed = true;
+            }
+
+            return !anyInsertFailed;
+        }
+
+        public override IList<DataStorePlanetGroup> GetAllPlanetGroups()
+        {
+            const string SelectQuery = @"SELECT * FROM dbo.PlanetGroups";
+
+            DataTable results = executeQuery(SelectQuery, null);
+
+            return results.Rows.OfType<DataRow>()
+                .Select(dr => new DataStorePlanetGroup()
+                {
+                    ID = dr.Field<int>("ID"),
+                    Climate = dr.Field<string>("Climate"),
+                    Terrain = dr.Field<string>("Terrain"),
+                    PlanetCount = dr.Field<int>("PlanetCount")
+                })
+                .ToList();
+        }
+
+        public override bool DeleteAllPlanetGroups()
+        {
+            const string DeleteQuery = @"DELETE FROM dbo.PlanetGroups";
+
+            return executeNonQuery(DeleteQuery, null);
+        }
+
+        public override DataStorePlanetGroup GetPlanetGroup(int ID)
+        {
+            const string SelectQueryFormatString = @"SELECT * FROM dbo.PlanetGroups WHERE ID = {0}";
+
+            string selectQuery = string.Format(SelectQueryFormatString, ID);
+
+            DataTable dt = executeQuery(selectQuery, null);
+
+            return new DataStorePlanetGroup()
+            {
+                ID = dt.Rows[0].Field<int>("ID"),
+                Climate = dt.Rows[0].Field<string>("Climate"),
+                Terrain = dt.Rows[0].Field<string>("Terrain"),
+                PlanetCount = dt.Rows[0].Field<int>("PlanetCount")
+            };
+        }
+
+        public override IList<DataStorePlanet> GetMatchingPlanets(string climate, string terrain)
+        {
+            string selectQuery = @"SELECT * FROM dbo.Planets WHERE ";
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            if (string.IsNullOrWhiteSpace(climate))
+                selectQuery += " Planets.Climate IS NULL ";
+            else
+            {
+                selectQuery += " Planets.Climate LIKE '%' + @Climate + '%' ";
+                parameters.Add(new SqlParameter("@Climate", climate));
+            }
+
+            if (string.IsNullOrWhiteSpace(terrain))
+                selectQuery += " AND Planets.Terrain IS NULL ";
+            else
+            {
+                selectQuery += " AND Planets.Terrain LIKE '%' + @Terrain + '%' ";
+                parameters.Add(new SqlParameter("@Terrain", terrain));
+            }
+
+            DataTable results = executeQuery(selectQuery, parameters);
+
+            return results.Rows.OfType<DataRow>()
+                .Select(dr => new DataStorePlanet()
+                {
+                    ID = dr.Field<int>("ID"),
+                    Name = dr.Field<string>("Name"),
+                    Climate = dr.Field<string>("Climate"),
+                    Gravity = dr.Field<string>("Gravity"),
+                    Population = dr.Field<int?>("Population"),
+                    SurfaceWater = dr.Field<decimal?>("SurfaceWater"),
+                    Terrain = dr.Field<string>("Terrain")
+                })
+                .ToList();
         }
 
         private static DataTable executeQuery(string query, List<SqlParameter> parameters)

@@ -1,0 +1,16 @@
+﻿@page
+@model PlanetFinder.Pages.DataAnalysis.IndexModel
+@{
+    ViewData["Title"] = "Data Analysis";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Data Analysis</h1>
+    <p>Please click on the button below to analyze the Planet Data to determine the climate / terrain pairings and store the results in an Azure database</p>
+    <form id="form" name="form" method="post">
+        <input name="btnAnalyze" id="btnAnalyze" asp-page-handler="AnalyzeData" type="submit" value="Analyze Data" class="btn btn-success" />
+        <br />
+        <br />
+        <textarea asp-for="@Model.LogString" value="@Model.LogString" readonly="readonly" style="background-color: lightgray; width: 350px; height: 200px;"></textarea>
+    </form>
+</div>

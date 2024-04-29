@@ -1,0 +1,46 @@
+﻿@page
+@model PlanetFinder.Pages.PlanetGroups.IndexModel
+@{
+    ViewData["Title"] = "Planet Groups";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Star Wars Planet Groups</h1>
+    <br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.PlanetGroups[0].Climate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PlanetGroups[0].Terrain)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PlanetGroups[0].PlanetCount)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.PlanetGroups)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Climate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Terrain)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlanetCount)
+                    </td>
+                    <td>
+                        <a asp-page="./Details" asp-route-id="@item.ID">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

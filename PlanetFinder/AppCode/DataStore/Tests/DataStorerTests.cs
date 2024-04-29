@@ -18,7 +18,7 @@ namespace PlanetFinder.AppCode.DataStore.Tests
 
             Debug.Assert(dataStorer.GetAllPlanets().Count == 0);
 
-            dataStorer.SaveToStore(planets);
+            dataStorer.SavePlanetsToStore(planets);
 
             Debug.Assert(dataStorer.GetAllPlanets().Count == 3);
 

@@ -50,7 +50,7 @@ namespace PlanetFinder.AppCode.Gateway
 
             log.Add("Saving planets to data store");
 
-            if (DataStorer.SaveToStore(planets))
+            if (DataStorer.SavePlanetsToStore(planets))
             {
                 log.Add("Save successful");
                 success = true;
