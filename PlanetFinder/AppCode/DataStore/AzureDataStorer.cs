@@ -164,11 +164,13 @@ SELECT
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
+            // Can't just do a simple LIKE because "forest" will match on "rainforest"
+            // Look for the filter being either the first word, or preceded by a space
             if (string.IsNullOrWhiteSpace(climate))
                 selectQuery += " Planets.Climate IS NULL ";
             else
             {
-                selectQuery += " Planets.Climate LIKE '%' + @Climate + '%' ";
+                selectQuery += " (Planets.Climate LIKE @Climate + '%' OR Planets.Climate LIKE '% ' + @Climate + '%')";
                 parameters.Add(new SqlParameter("@Climate", climate));
             }
 
@@ -176,7 +178,7 @@ SELECT
                 selectQuery += " AND Planets.Terrain IS NULL ";
             else
             {
-                selectQuery += " AND Planets.Terrain LIKE '%' + @Terrain + '%' ";
+                selectQuery += " AND (Planets.Terrain LIKE @Terrain + '%' OR Planets.Terrain LIKE '% ' + @Terrain + '%')";
                 parameters.Add(new SqlParameter("@Terrain", terrain));
             }
 

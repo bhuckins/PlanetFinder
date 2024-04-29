@@ -51,6 +51,28 @@ namespace PlanetFinder.AppCode.DataAnalysis
                 }
             }
 
+            // Sometimes attributes are plural, sometimes they aren't
+            // Ex. desert vs deserts
+            // Want to merge these together
+
+            foreach (var kvp in planetGroupLookup.ToList())
+            {
+                string cleanClimate = kvp.Key.Climate != null && kvp.Key.Climate.EndsWith("s") ? kvp.Key.Climate.Substring(0, kvp.Key.Climate.Length - 1) : kvp.Key.Climate;
+                string cleanTerrain = kvp.Key.Terrain != null && kvp.Key.Terrain.EndsWith("s") ? kvp.Key.Terrain.Substring(0, kvp.Key.Terrain.Length - 1) : kvp.Key.Terrain;
+
+                var potentialKey = (cleanClimate, cleanTerrain);
+
+                // If neither the climate nor terrain are plural, don't need to do anything
+                if (kvp.Key == potentialKey)
+                    continue;
+
+                if (planetGroupLookup.ContainsKey(potentialKey))
+                {
+                    planetGroupLookup[potentialKey] += kvp.Value;
+                    planetGroupLookup.Remove(kvp.Key);
+                }
+            }
+
             planetGroups = planetGroupLookup
                 .Select(kvp => (IPlanetGroup)new PlanetGroup()
                 {
