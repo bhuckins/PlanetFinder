@@ -170,7 +170,7 @@ SELECT
                 selectQuery += " Planets.Climate IS NULL ";
             else
             {
-                selectQuery += " (Planets.Climate LIKE @Climate + '%' OR Planets.Climate LIKE '% ' + @Climate + '%')";
+                selectQuery += " (Planets.Climate LIKE @Climate OR Planets.Climate LIKE @Climate + ',%' OR Planets.Climate LIKE '% ' + @Climate OR Planets.Climate LIKE '% ' + @Climate + ',%')";
                 parameters.Add(new SqlParameter("@Climate", climate));
             }
 
@@ -178,7 +178,7 @@ SELECT
                 selectQuery += " AND Planets.Terrain IS NULL ";
             else
             {
-                selectQuery += " AND (Planets.Terrain LIKE @Terrain + '%' OR Planets.Terrain LIKE '% ' + @Terrain + '%')";
+                selectQuery += " AND (Planets.Terrain LIKE @Terrain OR Planets.Terrain LIKE @Terrain + ',%' OR Planets.Terrain LIKE '% ' + @Terrain OR Planets.Terrain LIKE '% ' + @Terrain + ',%')";
                 parameters.Add(new SqlParameter("@Terrain", terrain));
             }
 
